@@ -192,4 +192,674 @@
 
         .menu-text {
             flex: 1;
-            overflow: hi
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .arrow {
+            font-size: 12px;
+            transition: transform 0.3s;
+            margin-right: 4px;
+        }
+
+        .arrow.rotate {
+            transform: rotate(90deg);
+        }
+
+        /* --- Sub Menu (Recursive) --- */
+        .sub-menu-container {
+            display: none; /* 默认隐藏 */
+            background: #fafafa;
+            overflow: hidden;
+        }
+
+        .sub-menu-container.open {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        /* 层级缩进 */
+        .sub-menu-container > .menu-item {
+            padding-left: 54px; /* Level 2 */
+        }
+
+        .sub-menu-container .sub-menu-container > .menu-item {
+            padding-left: 74px; /* Level 3 */
+        }
+
+        .sub-menu-container .sub-menu-container .sub-menu-container > .menu-item {
+            padding-left: 94px; /* Level 4 */
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Main Content --- */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f0f2f5;
+            min-width: 0; /* 防止flex子项溢出 */
+        }
+
+        /* --- Breadcrumb --- */
+        .breadcrumb {
+            height: 40px;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+
+        .breadcrumb strong {
+            color: var(--text-color);
+        }
+
+        /* --- Tabs --- */
+        .tabs {
+            height: var(--tab-height);
+            background: #fff;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 10px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 5px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab {
+            padding: 0 16px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e4e7ed;
+            border-radius: 4px 4px 0 0;
+            background: #fff;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            position: relative;
+            top: 1px;
+        }
+
+        .tab:hover {
+            color: var(--primary-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            background: #f0f2f5;
+            border-bottom-color: #f0f2f5;
+        }
+
+        .tab .close-icon {
+            margin-left: 8px;
+            font-size: 12px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab .close-icon:hover {
+            background: #c0c4cc;
+            color: #fff;
+        }
+
+        /* --- Iframe Container --- */
+        #iframes {
+            flex: 1;
+            position: relative;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 4px;
+            background: #fff;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        iframe.active {
+            display: block;
+        }
+
+        /* --- Home Dashboard --- */
+        .home {
+            position: absolute;
+            inset: 15px; /* match padding of #iframes */
+            background: #fff;
+            border-radius: 4px;
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .home-header {
+            margin-bottom: 30px;
+        }
+
+        .home-header h2 {
+            font-size: 24px;
+            color: #303133;
+        }
+
+        .home-header p {
+            color: #909399;
+            margin-top: 8px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #ebeef5;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #909399;
+            margin-bottom: 10px;
+        }
+
+        .card .num {
+            font-size: 28px;
+            font-weight: bold;
+            color: #303133;
+        }
+
+        /* Tooltip for collapsed sidebar */
+        .menu-item[title]:hover::after {
+            /* CSS tooltip fallback if JS fails, but we will use custom logic */
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="header">
+    <div class="left">
+        <div class="toggle" id="sidebarToggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <div class="logo">
+            <i class="fa-solid fa-camera"></i>
+            <span>Camera生产可视化数据平台</span>
+        </div>
+    </div>
+    <div class="right">
+        <!-- 可以添加用户信息等 -->
+        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+            <img src="https://picsum.photos/seed/admin/32/32" style="border-radius:50%;" alt="User">
+            <span style="font-size:14px; font-weight:500;">管理员</span>
+        </div>
+    </div>
+</div>
+
+<div class="layout">
+    <div class="sidebar" id="sidebar">
+        <div id="menuRoot"></div>
+    </div>
+
+    <div class="main">
+        <div class="breadcrumb" id="breadcrumb">
+            <i class="fa-solid fa-house" style="margin-right:8px;"></i> 首页
+        </div>
+
+        <div class="tabs" id="tabs">
+            <!-- Tabs will be injected here -->
+        </div>
+
+        <div id="iframes">
+            <div id="home" class="home">
+                <div class="home-header">
+                    <h2>欢迎使用后台管理系统</h2>
+                    <p>这是一个支持四级菜单的原生JS单页应用示例。</p>
+                </div>
+                <div class="cards">
+                    <div class="card">
+                        <h3>今日产量</h3>
+                        <div class="num">1,284</div>
+                    </div>
+                    <div class="card">
+                        <h3>在线设备</h3>
+                        <div class="num">56</div>
+                    </div>
+                    <div class="card">
+                        <h3>异常订单</h3>
+                        <div class="num" style="color:#f56c6c">3</div>
+                    </div>
+                    <div class="card">
+                        <h3>系统访问量</h3>
+                        <div class="num">98,234</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; padding: 20px; background: #f9fafc; border-radius: 8px;">
+                    <h4 style="margin-bottom: 10px;">操作说明：</h4>
+                    <ul style="padding-left: 20px; line-height: 1.8; color: #606266;">
+                        <li>点击左上角 <i class="fa-solid fa-bars"></i> 图标可折叠/展开侧边栏。</li>
+                        <li>点击菜单项可展开子菜单（支持4级）。</li>
+                        <li>点击最终菜单项将在右侧以 iframe 形式打开页面。</li>
+                        <li>支持多标签页切换，点击标签上的 <i class="fa-solid fa-xmark"></i> 可关闭。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. 数据结构 (支持4级) ---
+    const menuData = [
+        {
+            title: "基线规格",
+            icon: "fa-box-open",
+            children: [
+                {
+                    title: "量产工艺路线",
+                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/page--67ce838d94e2cf2806a6014c"
+                },
+                {
+                    title: "参考门限",
+                    children: [
+                        {
+                            title: "工位",
+                            children: [
+                                {title: "CAT_COLOR", url: "https://aresocean.huawei.com/oceanblocks/app/camera/cat-color--6790ac4f94e2cf2806a5b968"},
+                                {title: "OT_M2", url: "https://aresocean.huawei.com/oceanblocks/app/camera/ot-m2--67aaeca3de536042db12d299"},
+                                {title: "OT_M", url: "https://aresocean.huawei.com/oceanblocks/app/camera/ot-m--67ac0d8094e2cf2806a5d53e"},
+                                {title: "MMI", url: "https://aresocean.huawei.com/oceanblocks/app/camera/mmi--67bd2815de536042db12eefa"},
+                                {title: "HDDC", url: "https://aresocean.huawei.com/oceanblocks/app/camera/hddc--67c51ca0583d20057098bf24"},
+                                {title: "HTDC", url: "https://aresocean.huawei.com/oceanblocks/app/camera/htdc--67c59a18de536042db12f5e4"},
+                                {title: "CAT_SFR_FAR", url: "https://aresocean.huawei.com/oceanblocks/app/camera/cat-sfr-far--67bef04e583d20057098b9c7"},
+                                {title: "CAT_SFR_NEAR", url: "https://aresocean.huawei.com/oceanblocks/app/camera/cat-sfr-near--67c2b122583d20057098bed3"},
+                                {title: "FCAT", url: "https://aresocean.huawei.com/oceanblocks/app/camera/fcat--67c5a25b94e2cf2806a5fba7"},
+                            ]
+
+                        }
+                    ]
+                },
+                {
+                    title: "项目门限",
+                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/page--6a27d1932eeab30412504b98"
+                },
+                {
+                    title: "模组编码",
+                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/page--6a0d5e917afa66369e5c9014"
+                },
+                {
+                    title: "测试规格",
+                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/final--67dd05b394e2cf2806a61441"
+                },
+                {
+                    title: "测试UPH",
+                    children: [
+                        {
+                            title: "目录",
+                            children: [
+                                {title: "测试UPH", url: "https://aresocean.huawei.com/oceanblocks/app/camera/uph-final--67e1202694e2cf2806a616d8"},
+                                {title: "测试UPH继承", url: "https://aresocean.huawei.com/oceanblocks/app/camera/uph--67d2a5c1de536042db130045"},
+
+                            ]
+
+                        }
+                    ]
+                },
+            ]
+        },
+        {
+            title: "生产数据",
+            icon: "fa-chart-line",
+            children: [
+                {
+                    title: "实时监控",
+                    children: [
+                        {
+                            title: "车间A区",
+                            children: [
+                                {title: "产线1状态", url: "https://developer.mozilla.org/"},
+                                {title: "产线2状态", url: "https://www.runoob.com/"}
+                            ]
+                        },
+                        {title: "车间B区", url: "#"}
+                    ]
+                },
+                {
+                    title: "历史报表",
+                    children: [
+                        {title: "日报表", url: "#"},
+                        {title: "月报表", url: "#"}
+                    ]
+                }
+            ]
+        },
+        {
+            title: "系统设置",
+            icon: "fa-gear",
+            children: [
+                {
+                    title: "用户权限",
+                    children: [
+                        {title: "用户列表", url: "https://cn.bing.com/"},
+                        {title: "角色管理", url: "https://www.google.com/"}
+                    ]
+                }
+            ]
+        }
+    ];
+
+    // --- 2. 状态管理 ---
+    const state = {
+        activeTab: null,
+        tabs: [], // { id, title, url }
+        collapsed: false
+    };
+
+    // --- 3. DOM 元素 ---
+    const menuRoot = document.getElementById("menuRoot");
+    const sidebar = document.getElementById("sidebar");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const tabsContainer = document.getElementById("tabs");
+    const iframesContainer = document.getElementById("iframes");
+    const breadcrumb = document.getElementById("breadcrumb");
+
+    // --- 4. 递归渲染菜单 ---
+    function createMenu(items, level = 1, parentPath = []) {
+        if (!items || items.length === 0) return null;
+
+        const container = document.createElement("div");
+        container.className = level === 1 ? "" : "sub-menu-container";
+        // 如果不是第一级，默认隐藏
+        if (level > 1) container.style.display = "none";
+
+        items.forEach((item, index) => {
+            const itemEl = document.createElement("div");
+            itemEl.className = "menu-item";
+
+            // 构建当前节点的路径
+            const currentPath = [...parentPath, item.title];
+
+            // 判断是否有子节点
+            const hasChildren = item.children && item.children.length > 0;
+
+            // 图标处理
+            const iconHtml = level === 1
+                ? `<i class="menu-icon fa-solid ${item.icon || 'fa-circle-dot'}"></i>`
+                : ``; // 2、3、4级菜单不显示图标
+
+            itemEl.innerHTML = `
+          ${iconHtml}
+          <span class="menu-text">${item.title}</span>
+          ${hasChildren ? '<i class="arrow fa-solid fa-angle-right"></i>' : ''}
+        `;
+
+            // 如果是侧边栏收缩状态，添加简单的title提示
+            itemEl.setAttribute("title", item.title);
+
+            // 点击事件
+            itemEl.onclick = (e) => {
+                e.stopPropagation(); // 防止冒泡
+
+                // 如果侧边栏是收缩的，先展开
+                if (state.collapsed) {
+                    // 可选：点击收缩菜单时自动展开侧边栏，或者不做处理
+                    // 这里我们不做处理，因为在CSS中收缩状态下子菜单是隐藏的
+                    return;
+                }
+
+                // 1. 如果有子菜单，处理展开/折叠
+                if (hasChildren) {
+                    const subContainer = itemEl.nextElementSibling; // 子菜单容器
+                    const arrow = itemEl.querySelector(".arrow");
+
+                    const isHidden = getComputedStyle(subContainer).display === "none";
+                    if (isHidden) {
+                        subContainer.style.display = "block";
+                        subContainer.classList.add("open");
+                        if (arrow) arrow.classList.add("rotate");
+                    } else {
+                        subContainer.style.display = "none";
+                        subContainer.classList.remove("open");
+                        if (arrow) arrow.classList.remove("rotate");
+                    }
+                }
+                // 2. 如果是叶子节点，打开Tab
+                else if (item.url) {
+                    // 移除所有高亮
+                    document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("active"));
+                    // 高亮当前
+                    itemEl.classList.add("active");
+
+                    // 打开 Tab
+                    openTab(currentPath.join(" / "), item.title, item.url);
+                }
+            };
+
+            container.appendChild(itemEl);
+
+            // 递归创建子菜单
+            if (hasChildren) {
+                const subMenu = createMenu(item.children, level + 1, currentPath);
+                container.appendChild(subMenu);
+            }
+        });
+
+        return container;
+    }
+
+    // 初始化菜单
+    menuRoot.appendChild(createMenu(menuData));
+
+    // --- 5. Tab 和 Iframe 逻辑 ---
+    function openTab(fullPath, title, url) {
+        // 更新面包屑
+        breadcrumb.innerHTML = `<i class="fa-solid fa-house" style="margin-right:8px;"></i> ${fullPath}`;
+
+        // 检查 Tab 是否已存在
+        const existingTab = state.tabs.find(t => t.title === title);
+        if (existingTab) {
+            activateTab(title);
+            return;
+        }
+
+        // 添加新 Tab 数据
+        state.tabs.push({title, url});
+
+        // 创建 Tab DOM
+        const tabEl = document.createElement("div");
+        tabEl.className = "tab";
+        tabEl.dataset.title = title;
+        tabEl.innerHTML = `
+        ${title}
+        <span class="close-icon"><i class="fa-solid fa-xmark"></i></span>
+      `;
+
+        // Tab 点击事件
+        tabEl.addEventListener("click", (e) => {
+            if (e.target.closest(".close-icon")) {
+                // 点击关闭按钮
+                closeTab(title);
+            } else {
+                // 点击 Tab 本身
+                activateTab(title);
+            }
+        });
+
+        tabsContainer.appendChild(tabEl);
+
+        // 创建 Iframe DOM
+        const iframeEl = document.createElement("iframe");
+        iframeEl.src = url;
+        iframeEl.id = `iframe_${title}`;
+        iframeEl.name = title;
+
+        // --- 新增以下代码 ---
+        // allow-same-origin: 允许页面被视为同源，解决 localStorage 和 CORS 问题
+        // allow-scripts: 允许页面执行 JavaScript
+        // allow-forms: 允许提交表单
+        // allow-popups: 允许弹出窗口（如果需要）
+        iframeEl.sandbox = "allow-same-origin allow-scripts allow-forms allow-popups";
+        // -------------------
+        iframesContainer.appendChild(iframeEl);
+
+        // 激活新 Tab
+        activateTab(title);
+    }
+
+    function activateTab(title) {
+        state.activeTab = title;
+
+        // 1. 更新 Tab 样式
+        document.querySelectorAll(".tab").forEach(t => {
+            if (t.dataset.title === title) {
+                t.classList.add("active");
+                // 确保滚动到可见区域
+                t.scrollIntoView({behavior: "smooth", block: "nearest", inline: "center"});
+            } else {
+                t.classList.remove("active");
+            }
+        });
+
+        // 2. 更新 Iframe 显示
+        document.querySelectorAll("iframe").forEach(f => f.classList.remove("active"));
+        const activeIframe = document.getElementById(`iframe_${title}`);
+        if (activeIframe) activeIframe.classList.add("active");
+
+        // 3. 隐藏 Home
+        document.getElementById("home").style.display = "none";
+
+        // 4. 更新菜单高亮 (根据 title 查找对应的 menu-item 并高亮)
+        document.querySelectorAll(".menu-item").forEach(item => {
+            const text = item.querySelector(".menu-text").textContent;
+            if (text === title) {
+                item.classList.add("active");
+                // 确保所有父级菜单都是展开的
+                expandParents(item);
+            } else {
+                // 如果不是当前激活路径上的节点，可以考虑移除高亮，但为了保持面包屑逻辑，这里只移除同级高亮
+                // 简单起见，这里不做全量清除，依靠点击时的清除逻辑
+            }
+        });
+    }
+
+    // 辅助函数：展开父级菜单
+    function expandParents(element) {
+        let parent = element.parentElement;
+        while (parent) {
+            if (parent.classList.contains("sub-menu-container")) {
+                parent.style.display = "block";
+                parent.classList.add("open");
+
+                // 找到控制这个容器的父级 menu-item 并旋转箭头
+                const sibling = parent.previousElementSibling; // 应该是 menu-item
+                if (sibling && sibling.classList.contains("menu-item")) {
+                    const arrow = sibling.querySelector(".arrow");
+                    if (arrow) arrow.classList.add("rotate");
+                }
+            }
+            parent = parent.parentElement;
+        }
+    }
+
+    function closeTab(title) {
+        const index = state.tabs.findIndex(t => t.title === title);
+        if (index === -1) return;
+
+        // 移除数据
+        state.tabs.splice(index, 1);
+
+        // 移除 DOM
+        const tabEl = document.querySelector(`.tab[data-title="${title}"]`);
+        const iframeEl = document.getElementById(`iframe_${title}`);
+        if (tabEl) tabEl.remove();
+        if (iframeEl) iframeEl.remove();
+
+        // 如果关闭的是当前激活的 Tab
+        if (state.activeTab === title) {
+            if (state.tabs.length > 0) {
+                // 激活最后一个，或者激活前一个
+                const nextTab = state.tabs[index - 1] || state.tabs[0];
+                activateTab(nextTab.title);
+            } else {
+                // 没有 Tab 了，显示 Home
+                state.activeTab = null;
+                document.getElementById("home").style.display = "block";
+                breadcrumb.innerHTML = `<i class="fa-solid fa-house" style="margin-right:8px;"></i> 首页`;
+                // 清除菜单高亮
+                document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+            }
+        }
+    }
+
+    // --- 6. 侧边栏折叠逻辑 ---
+    sidebarToggle.onclick = () => {
+        state.collapsed = !state.collapsed;
+        if (state.collapsed) {
+            sidebar.classList.add("collapsed");
+        } else {
+            sidebar.classList.remove("collapsed");
+        }
+    };
+
+    // --- 7. 初始化：默认打开第一个四级菜单 ---
+    // 找到第一个有 url 的叶子节点
+    function findFirstLeaf(items) {
+        for (let item of items) {
+            if (item.url) return item;
+            if (item.children) {
+                const found = findFirstLeaf(item.children);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    const firstItem = findFirstLeaf(menuData);
+    if (firstItem) {
+        // 构建路径稍微复杂一点，因为需要递归查找路径
+        // 这里为了演示简单，我们手动打开一个特定的，或者只打开叶子节点
+        // 更好的方式是给数据加 id，这里用简单方法：
+        openTab("基线规格 / 量产工艺路线", "量产工艺路线", firstItem.url);
+    }
+
+</script>
+</body>
+</html>
