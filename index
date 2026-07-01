@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Camera生产可视化数据平台 - 四级菜单版</title>
+    <!-- 引入 FontAwesome 图标库 (使用CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #409eff;
+            --primary-bg: #ecf5ff;
+            --text-color: #303133;
+            --text-light: #909399;
+            --border-color: #e6e6e6;
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 64px;
+            --header-height: 60px;
+            --tab-height: 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            background: #f0f2f5;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        /* --- Header --- */
+        .header {
+            height: var(--header-height);
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toggle {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .toggle:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Layout --- */
+        .layout {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            z-index: 5;
+        }
+
+        /* 滚动条样式 */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #dcdfe6;
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* 收缩状态 */
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        /* 收缩时隐藏文本和箭头，保留图标 */
+        .sidebar.collapsed .menu-text,
+        .sidebar.collapsed .arrow {
+            display: none;
+        }
+
+        /* 收缩时隐藏所有子菜单容器 */
+        .sidebar.collapsed .sub-menu-container {
+            display: none !important;
+        }
+
+        /* 收缩时一级菜单样式调整 */
+        .sidebar.collapsed .menu-item {
+            padding: 0;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-icon {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        /* --- Menu Items --- */
+        .menu-item {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-color);
+            transition: all 0.2s;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        /* 左侧层级引导线 */
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-color);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--primary-bg);
+            color: var(--primary-color);
+        }
+
+        /* 激活/高亮状态 */
+        .menu-item.active {
+            color: var(--primary-color);
+            background: var(--primary-bg);
+            font-weight: 500;
+        }
+
+        .menu-item.active::before {
+            opacity: 1;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .menu-text {
+            flex: 1;
+            overflow: hi
