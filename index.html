@@ -535,19 +535,19 @@
     window.addEventListener("message", function (event) {
         // 安全建议：在生产环境中建议检查 event.origin
         // if (event.origin !== "http://your-trusted-domain.com") return;
-
+console.log("qqqqqqqq",event);
         const message = event.data;
 
         // 简单的消息解析
         let data = message;
-        if (typeof message === "string") {
-            try {
-                data = JSON.parse(message);
-            } catch (e) {
-                console.warn("收到字符串消息，但不是 JSON：", message);
-                return;
-            }
-        }
+      //  if (typeof message === "string") {
+       //     try {
+       //         data = JSON.parse(message);
+      //      } catch (e) {
+       //         console.warn("收到字符串消息，但不是 JSON：", message);
+      //          return;
+       //     }
+     //   }
 
         // 检查是否是菜单数据
         if (data && data.type === "MENU_DATA" && Array.isArray(data.data)) {
