@@ -540,14 +540,14 @@ console.log("qqqqqqqq",event);
 
         // 简单的消息解析
         let data = message;
-      //  if (typeof message === "string") {
-       //     try {
-       //         data = JSON.parse(message);
-      //      } catch (e) {
-       //         console.warn("收到字符串消息，但不是 JSON：", message);
-      //          return;
-       //     }
-     //   }
+          if (typeof message === "string") {
+          try {
+                data = JSON.parse(message);
+           } catch (e) {
+                console.warn("收到字符串消息，但不是 JSON：", message);
+                return;
+            }
+        }
 
         // 检查是否是菜单数据
         if (data && data.type === "MENU_DATA" && Array.isArray(data.data)) {
