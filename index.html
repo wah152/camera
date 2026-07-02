@@ -16,7 +16,7 @@
             --border-color: #e6e6e6;
             --sidebar-width: 260px;
             --sidebar-collapsed-width: 64px;
-            --header-height: 60px;
+            --header-height: 50px;
             --tab-height: 40px;
         }
 
@@ -128,7 +128,7 @@
 
         /* 收缩时一级菜单样式调整 */
         .sidebar.collapsed .menu-item {
-            padding: 0;
+            padding: 10px 0;
             justify-content: center;
         }
 
@@ -282,6 +282,14 @@
             gap: 5px;
             overflow-x: auto;
             white-space: nowrap;
+            /* 隐藏滚动条 */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE 10+ */
+        }
+
+        /* Chrome, Safari, Edge */
+        .tabs::-webkit-scrollbar {
+            display: none; /* 隐藏滚动条 */
         }
 
         .tab {
@@ -330,7 +338,7 @@
         #iframes {
             flex: 1;
             position: relative;
-            padding: 15px;
+            padding: 10px;
             overflow: hidden;
         }
 
@@ -358,6 +366,62 @@
             overflow-y: auto;
             box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
             display: block;
+        }
+
+        /* 首页菜单卡片样式 */
+        .home-menu-group {
+            background: #fff;
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .home-menu-group:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .home-group-title {
+            padding: 15px 20px;
+            background: #f5f7fa;
+            border-bottom: 1px solid #ebeef5;
+            font-size: 16px;
+            font-weight: 600;
+            color: #303133;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .home-group-list {
+            padding: 10px 0;
+        }
+
+        .home-group-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #606266;
+            font-size: 14px;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .home-group-item:hover {
+            background: #ecf5ff;
+            color: #409eff;
+        }
+
+        .home-group-item i.arrow-icon {
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .home-group-item:hover i.arrow-icon {
+            opacity: 1;
         }
 
         .home-header {
@@ -426,10 +490,10 @@
     </div>
     <div class="right">
         <!-- 可以添加用户信息等 -->
-        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-            <img src="https://picsum.photos/seed/admin/32/32" style="border-radius:50%;" alt="User">
-            <span style="font-size:14px; font-weight:500;">管理员</span>
-        </div>
+        <!--        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;">-->
+        <!--            <img src="https://picsum.photos/seed/admin/32/32" style="border-radius:50%;" alt="User">-->
+        <!--            <span style="font-size:14px; font-weight:500;">管理员</span>-->
+        <!--        </div>-->
     </div>
 </div>
 
@@ -450,36 +514,13 @@
         <div id="iframes">
             <div id="home" class="home">
                 <div class="home-header">
-                    <h2>欢迎使用后台管理系统</h2>
-                    <p>这是一个支持四级菜单的原生JS单页应用示例。</p>
-                </div>
-                <div class="cards">
-                    <div class="card">
-                        <h3>今日产量</h3>
-                        <div class="num">1,284</div>
-                    </div>
-                    <div class="card">
-                        <h3>在线设备</h3>
-                        <div class="num">56</div>
-                    </div>
-                    <div class="card">
-                        <h3>异常订单</h3>
-                        <div class="num" style="color:#f56c6c">3</div>
-                    </div>
-                    <div class="card">
-                        <h3>系统访问量</h3>
-                        <div class="num">98,234</div>
-                    </div>
+                    <h2>Camera生产可视化数据平台</h2>
+                    <p>请选择下方的功能模块进入</p>
                 </div>
 
-                <div style="margin-top: 40px; padding: 20px; background: #f9fafc; border-radius: 8px;">
-                    <h4 style="margin-bottom: 10px;">操作说明：</h4>
-                    <ul style="padding-left: 20px; line-height: 1.8; color: #606266;">
-                        <li>点击左上角 <i class="fa-solid fa-bars"></i> 图标可折叠/展开侧边栏。</li>
-                        <li>点击菜单项可展开子菜单（支持4级）。</li>
-                        <li>点击最终菜单项将在右侧以 iframe 形式打开页面。</li>
-                        <li>支持多标签页切换，点击标签上的 <i class="fa-solid fa-xmark"></i> 可关闭。</li>
-                    </ul>
+                <!-- 首页菜单容器 -->
+                <div id="homeMenuContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                    <!-- 菜单将通过 JS 动态插入这里 -->
                 </div>
             </div>
         </div>
@@ -488,107 +529,59 @@
 
 <script>
     // --- 1. 数据结构 (支持4级) ---
-    const menuData = [
-        {
-            title: "基线规格",
-            icon: "fa-box-open",
-            children: [
-                {
-                    title: "量产工艺路线",
-                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/page--67ce838d94e2cf2806a6014c"
-                },
-                {
-                    title: "参考门限",
-                    children: [
-                        {
-                            title: "工位",
-                            children: [
-                                {title: "CAT_COLOR", url: "https://aresocean.huawei.com/oceanblocks/app/camera/cat-color--6790ac4f94e2cf2806a5b968"},
-                                {title: "OT_M2", url: "https://aresocean.huawei.com/oceanblocks/app/camera/ot-m2--67aaeca3de536042db12d299"},
-                                {title: "OT_M", url: "https://aresocean.huawei.com/oceanblocks/app/camera/ot-m--67ac0d8094e2cf2806a5d53e"},
-                                {title: "MMI", url: "https://aresocean.huawei.com/oceanblocks/app/camera/mmi--67bd2815de536042db12eefa"},
-                                {title: "HDDC", url: "https://aresocean.huawei.com/oceanblocks/app/camera/hddc--67c51ca0583d20057098bf24"},
-                                {title: "HTDC", url: "https://aresocean.huawei.com/oceanblocks/app/camera/htdc--67c59a18de536042db12f5e4"},
-                                {title: "CAT_SFR_FAR", url: "https://aresocean.huawei.com/oceanblocks/app/camera/cat-sfr-far--67bef04e583d20057098b9c7"},
-                                {title: "CAT_SFR_NEAR", url: "https://aresocean.huawei.com/oceanblocks/app/camera/cat-sfr-near--67c2b122583d20057098bed3"},
-                                {title: "FCAT", url: "https://aresocean.huawei.com/oceanblocks/app/camera/fcat--67c5a25b94e2cf2806a5fba7"},
-                            ]
+    let menuData = []; // 初始化为空数组
 
-                        }
-                    ]
-                },
-                {
-                    title: "项目门限",
-                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/page--6a27d1932eeab30412504b98"
-                },
-                {
-                    title: "模组编码",
-                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/page--6a0d5e917afa66369e5c9014"
-                },
-                {
-                    title: "测试规格",
-                    url: "https://aresocean.huawei.com/oceanblocks/app/camera/final--67dd05b394e2cf2806a61441"
-                },
-                {
-                    title: "测试UPH",
-                    children: [
-                        {
-                            title: "目录",
-                            children: [
-                                {title: "测试UPH", url: "https://aresocean.huawei.com/oceanblocks/app/camera/uph-final--67e1202694e2cf2806a616d8"},
-                                {title: "测试UPH继承", url: "https://aresocean.huawei.com/oceanblocks/app/camera/uph--67d2a5c1de536042db130045"},
+    // 监听来自父窗口（或其他窗口）的消息，接收 menuData
+    window.addEventListener("message", function (event) {
+        // 安全建议：在生产环境中建议检查 event.origin
+        // if (event.origin !== "http://your-trusted-domain.com") return;
 
-                            ]
+        const message = event.data;
 
-                        }
-                    ]
-                },
-            ]
-        },
-        {
-            title: "生产数据",
-            icon: "fa-chart-line",
-            children: [
-                {
-                    title: "实时监控",
-                    children: [
-                        {
-                            title: "车间A区",
-                            children: [
-                                {title: "产线1状态", url: "https://developer.mozilla.org/"},
-                                {title: "产线2状态", url: "https://www.runoob.com/"}
-                            ]
-                        },
-                        {title: "车间B区", url: "#"}
-                    ]
-                },
-                {
-                    title: "历史报表",
-                    children: [
-                        {title: "日报表", url: "#"},
-                        {title: "月报表", url: "#"}
-                    ]
-                }
-            ]
-        },
-        {
-            title: "系统设置",
-            icon: "fa-gear",
-            children: [
-                {
-                    title: "用户权限",
-                    children: [
-                        {title: "用户列表", url: "https://cn.bing.com/"},
-                        {title: "角色管理", url: "https://www.google.com/"}
-                    ]
-                }
-            ]
+        // 简单的消息解析
+        let data = message;
+        if (typeof message === "string") {
+            try {
+                data = JSON.parse(message);
+            } catch (e) {
+                console.warn("收到字符串消息，但不是 JSON：", message);
+                return;
+            }
         }
-    ];
+
+        // 检查是否是菜单数据
+        if (data && data.type === "MENU_DATA" && Array.isArray(data.data)) {
+            console.log("收到菜单数据，正在处理...");
+
+            // 1. 获取本地存储的旧数据
+            const localDataStr = localStorage.getItem('menuData');
+            const newDataStr = JSON.stringify(data.data);
+
+            // 2. 对比数据是否发生变化
+            if (localDataStr !== newDataStr) {
+                console.log("菜单数据有更新，正在更新本地存储和界面...");
+                // 更新本地存储
+                localStorage.setItem('menuData', newDataStr);
+
+                // 更新全局变量
+                menuData = data.data;
+
+                // 重新渲染菜单
+                renderMenu();
+
+                // 如果是首次加载且没有打开的Tab，尝试打开默认页
+                if (!state.activeTab) {
+                    initDefaultTab();
+                }
+            } else {
+                console.log("菜单数据未发生变化，忽略更新。");
+            }
+        }
+    });
 
     // --- 2. 状态管理 ---
     const state = {
-        activeTab: null,
+        activeTab: localStorage.getItem('activeTab') || null, // 修改这里：从本地存储读取
         tabs: [], // { id, title, url }
         collapsed: false
     };
@@ -603,27 +596,22 @@
 
     // --- 4. 递归渲染菜单 ---
     function createMenu(items, level = 1, parentPath = []) {
+        // ... (保持原有的 createMenu 函数代码不变) ...
         if (!items || items.length === 0) return null;
 
         const container = document.createElement("div");
         container.className = level === 1 ? "" : "sub-menu-container";
-        // 如果不是第一级，默认隐藏
         if (level > 1) container.style.display = "none";
 
         items.forEach((item, index) => {
             const itemEl = document.createElement("div");
             itemEl.className = "menu-item";
-
-            // 构建当前节点的路径
             const currentPath = [...parentPath, item.title];
-
-            // 判断是否有子节点
             const hasChildren = item.children && item.children.length > 0;
 
-            // 图标处理
             const iconHtml = level === 1
                 ? `<i class="menu-icon fa-solid ${item.icon || 'fa-circle-dot'}"></i>`
-                : ``; // 2、3、4级菜单不显示图标
+                : ``;
 
             itemEl.innerHTML = `
           ${iconHtml}
@@ -631,25 +619,32 @@
           ${hasChildren ? '<i class="arrow fa-solid fa-angle-right"></i>' : ''}
         `;
 
-            // 如果是侧边栏收缩状态，添加简单的title提示
             itemEl.setAttribute("title", item.title);
 
-            // 点击事件
             itemEl.onclick = (e) => {
-                e.stopPropagation(); // 防止冒泡
-
-                // 如果侧边栏是收缩的，先展开
+                e.stopPropagation();
                 if (state.collapsed) {
-                    // 可选：点击收缩菜单时自动展开侧边栏，或者不做处理
-                    // 这里我们不做处理，因为在CSS中收缩状态下子菜单是隐藏的
+                    state.collapsed = false;
+                    sidebar.classList.remove("collapsed");
+                    if (hasChildren) {
+                        const subContainer = itemEl.nextElementSibling;
+                        const arrow = itemEl.querySelector(".arrow");
+                        if (subContainer) {
+                            subContainer.style.display = "block";
+                            subContainer.classList.add("open");
+                        }
+                        if (arrow) arrow.classList.add("rotate");
+                    } else if (item.url) {
+                        document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("active"));
+                        itemEl.classList.add("active");
+                        openTab(currentPath.join(" / "), item.title, item.url);
+                    }
                     return;
                 }
 
-                // 1. 如果有子菜单，处理展开/折叠
                 if (hasChildren) {
-                    const subContainer = itemEl.nextElementSibling; // 子菜单容器
+                    const subContainer = itemEl.nextElementSibling;
                     const arrow = itemEl.querySelector(".arrow");
-
                     const isHidden = getComputedStyle(subContainer).display === "none";
                     if (isHidden) {
                         subContainer.style.display = "block";
@@ -660,22 +655,15 @@
                         subContainer.classList.remove("open");
                         if (arrow) arrow.classList.remove("rotate");
                     }
-                }
-                // 2. 如果是叶子节点，打开Tab
-                else if (item.url) {
-                    // 移除所有高亮
+                } else if (item.url) {
                     document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("active"));
-                    // 高亮当前
                     itemEl.classList.add("active");
-
-                    // 打开 Tab
                     openTab(currentPath.join(" / "), item.title, item.url);
                 }
             };
 
             container.appendChild(itemEl);
 
-            // 递归创建子菜单
             if (hasChildren) {
                 const subMenu = createMenu(item.children, level + 1, currentPath);
                 container.appendChild(subMenu);
@@ -685,8 +673,94 @@
         return container;
     }
 
+    // --- 新增：渲染首页菜单 ---
+    function renderHomeMenu() {
+        const container = document.getElementById("homeMenuContainer");
+        container.innerHTML = ''; // 清空
+
+        if (!menuData || menuData.length === 0) return;
+
+        menuData.forEach(group => {
+            // 创建一级菜单卡片
+            const groupEl = document.createElement("div");
+            groupEl.className = "home-menu-group";
+
+            // 一级菜单标题
+            const titleHtml = group.icon
+                ? `<i class="fa-solid ${group.icon}" style="color:var(--primary-color)"></i>${group.title}`
+                : group.title;
+
+            groupEl.innerHTML = `
+                <div class="home-group-title">${titleHtml}</div>
+                <div class="home-group-list"></div>
+            `;
+
+            const listEl = groupEl.querySelector(".home-group-list");
+
+            // 遍历二级菜单
+            if (group.children && group.children.length > 0) {
+                group.children.forEach(subItem => {
+                    const itemEl = document.createElement("div");
+                    itemEl.className = "home-group-item";
+                    itemEl.innerHTML = `
+                        <span>${subItem.title}</span>
+                        <i class="fa-solid fa-angle-right arrow-icon"></i>
+                    `;
+
+                    // 点击事件：跳转到该二级菜单下的第一个子页面
+                    itemEl.onclick = () => {
+                        let target = subItem;
+
+                        // 如果二级菜单本身有 URL，直接打开
+                        if (target.url) {
+                            openTab(`${group.title} /${target.title}`, target.title, target.url);
+                            return;
+                        }
+
+                        // 如果二级菜单没有 URL（有子菜单），找第一个有 URL 的子节点
+                        if (target.children && target.children.length > 0) {
+                            function findFirstUrl(items) {
+                                for (let item of items) {
+                                    if (item.url) return item;
+                                    if (item.children) {
+                                        const found = findFirstUrl(item.children);
+                                        if (found) return found;
+                                    }
+                                }
+                                return null;
+                            }
+
+                            const firstChild = findFirstUrl(target.children);
+                            if (firstChild) {
+                                // 构建路径：一级 / 二级 / ... / 目标
+                                // 这里简化处理，直接调用 openTab，它会自动处理路径
+                                openTab(firstChild.title, firstChild.title, firstChild.url);
+                            }
+                        }
+                    };
+
+                    listEl.appendChild(itemEl);
+                });
+            } else {
+                // 如果一级菜单下没有二级菜单，显示提示
+                listEl.innerHTML = '<div style="padding:10px 20px; color:#999; font-size:12px;">无子菜单</div>';
+            }
+
+            container.appendChild(groupEl);
+        });
+    }
+
+    // 新增：渲染菜单的入口函数
+    function renderMenu() {
+        menuRoot.innerHTML = ''; // 清空现有菜单
+        if (menuData.length > 0) {
+            menuRoot.appendChild(createMenu(menuData));
+            renderHomeMenu(); // 新增：同步更新首页菜单
+        }
+    }
+
     // 初始化菜单
-    menuRoot.appendChild(createMenu(menuData));
+    // menuRoot.appendChild(createMenu(menuData));
 
     // --- 5. Tab 和 Iframe 逻辑 ---
     function openTab(fullPath, title, url) {
@@ -724,8 +798,7 @@
         });
 
         tabsContainer.appendChild(tabEl);
-
-        // 创建 Iframe DOM
+// 创建 Iframe DOM
         const iframeEl = document.createElement("iframe");
         iframeEl.src = url;
         iframeEl.id = `iframe_${title}`;
@@ -742,10 +815,42 @@
 
         // 激活新 Tab
         activateTab(title);
+
+        // --- 新增这行代码：保存当前激活的 Tab 到本地存储 ---
+        localStorage.setItem('activeTab', title);
     }
 
     function activateTab(title) {
         state.activeTab = title;
+
+        // --- 新增这行代码：保存当前激活的 Tab ---
+        localStorage.setItem('activeTab', title);
+
+        // --- 新增：根据 title 查找完整路径并更新面包屑 ---
+        function findPath(items, targetTitle, currentPath = []) {
+            for (let item of items) {
+                // 构建当前节点的路径
+                const newPath = [...currentPath, item.title];
+
+                // 如果找到目标
+                if (item.title === targetTitle) {
+                    return newPath.join(" / ");
+                }
+
+                // 如果有子节点，递归查找
+                if (item.children && item.children.length > 0) {
+                    const result = findPath(item.children, targetTitle, newPath);
+                    if (result) return result;
+                }
+            }
+            return null;
+        }
+
+        const fullPath = findPath(menuData, title);
+        if (fullPath) {
+            breadcrumb.innerHTML = `<i class="fa-solid fa-house" style="margin-right:8px;"></i> ${fullPath}`;
+        }
+        // ------------------------------------------------
 
         // 1. 更新 Tab 样式
         document.querySelectorAll(".tab").forEach(t => {
@@ -774,8 +879,8 @@
                 // 确保所有父级菜单都是展开的
                 expandParents(item);
             } else {
-                // 如果不是当前激活路径上的节点，可以考虑移除高亮，但为了保持面包屑逻辑，这里只移除同级高亮
-                // 简单起见，这里不做全量清除，依靠点击时的清除逻辑
+                // 移除其他高亮，防止多个高亮
+                item.classList.remove("active");
             }
         });
     }
@@ -841,23 +946,70 @@
 
     // --- 7. 初始化：默认打开第一个四级菜单 ---
     // 找到第一个有 url 的叶子节点
-    function findFirstLeaf(items) {
-        for (let item of items) {
-            if (item.url) return item;
-            if (item.children) {
-                const found = findFirstLeaf(item.children);
-                if (found) return found;
+    // --- 7. 初始化逻辑 ---
+
+    // 封装默认打开 Tab 的逻辑
+    function initDefaultTab() {
+        // 优先尝试恢复上次打开的页面
+        const savedTabTitle = localStorage.getItem('activeTab');
+
+        if (savedTabTitle) {
+            function findItemByTitle(items, title) {
+                for (let item of items) {
+                    if (item.title === title) return item;
+                    if (item.children) {
+                        const found = findItemByTitle(item.children, title);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            }
+
+            const savedItem = findItemByTitle(menuData, savedTabTitle);
+            if (savedItem && savedItem.url) {
+                openTab(savedItem.title, savedItem.title, savedItem.url);
+                return;
             }
         }
-        return null;
+
+        // 如果没有保存记录，或者找不到对应项，打开第一个叶子节点
+        function findFirstLeaf(items) {
+            for (let item of items) {
+                if (item.url) return item;
+                if (item.children) {
+                    const found = findFirstLeaf(item.children);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        const firstItem = findFirstLeaf(menuData);
+        if (firstItem) {
+            openTab("基线规格 / 量产工艺路线", firstItem.title, firstItem.url);
+        }
     }
 
-    const firstItem = findFirstLeaf(menuData);
-    if (firstItem) {
-        // 构建路径稍微复杂一点，因为需要递归查找路径
-        // 这里为了演示简单，我们手动打开一个特定的，或者只打开叶子节点
-        // 更好的方式是给数据加 id，这里用简单方法：
-        openTab("基线规格 / 量产工艺路线", "量产工艺路线", firstItem.url);
+    // --- 页面加载初始化 ---
+
+    // 1. 尝试从本地存储恢复菜单数据
+    const localMenuStr = localStorage.getItem('menuData');
+    if (localMenuStr) {
+        try {
+            menuData = JSON.parse(localMenuStr);
+            console.log("已从本地存储恢复菜单数据");
+            renderMenu(); // 立即渲染菜单
+            renderHomeMenu(); // 新增：渲染首页菜单
+        } catch (e) {
+            console.error("本地菜单数据解析失败", e);
+            localStorage.removeItem('menuData'); // 清除损坏的数据
+        }
+    }
+
+    // 2. 尝试恢复上次打开的页面
+    // 注意：如果 menuData 为空（第一次访问且没收到消息），initDefaultTab 内部会处理
+    if (menuData.length > 0) {
+        initDefaultTab();
     }
 
 </script>
